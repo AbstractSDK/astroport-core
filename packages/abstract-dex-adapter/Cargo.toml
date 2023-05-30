@@ -1,0 +1,22 @@
+[package]
+name = "abstract-astroport-dex-adapter"
+version = "2.10.0"
+authors = ["Abstract Money <contact@abstract.money>"]
+edition = "2021"
+description = "Abstract DexCommand implementation for Astroport"
+license = "Apache-2.0"
+repository = "https://github.com/astroport-fi/astroport"
+
+[dependencies]
+cw20 = { version = "0.15" }
+cosmwasm-std = { version = "1.1" }
+cosmwasm-schema = {version="1.1"}
+
+astroport = {path="../astroport/"}
+
+#Abstract dependencies 
+abstract-core = { git="https://github.com/AbstractSDK/contracts" }
+abstract-sdk = { git="https://github.com/AbstractSDK/contracts" }
+abstract-adapter-utils =  {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
+abstract-dex-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
+cw-asset = "3.0.0"
