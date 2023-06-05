@@ -23,7 +23,7 @@ dependencies = [
 [[package]]
 name = "abstract-adapter-utils"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#435cb1cfaaefa1540c4c9129a6f5f2f073e95b8a"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#e2b83cce4dc6448302d0f11cfa724b0a90f6e238"
 dependencies = [
  "cosmwasm-std",
  "cw-asset",
@@ -34,7 +34,6 @@ dependencies = [
 name = "abstract-astroport-adapter"
 version = "2.10.0"
 dependencies = [
- "abstract-adapter-utils",
  "abstract-core",
  "abstract-dex-adapter-traits",
  "abstract-sdk",
@@ -75,7 +74,7 @@ dependencies = [
 [[package]]
 name = "abstract-dex-adapter-traits"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#435cb1cfaaefa1540c4c9129a6f5f2f073e95b8a"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#e2b83cce4dc6448302d0f11cfa724b0a90f6e238"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -140,7 +139,7 @@ dependencies = [
 [[package]]
 name = "abstract-staking-adapter-traits"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#435cb1cfaaefa1540c4c9129a6f5f2f073e95b8a"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#e2b83cce4dc6448302d0f11cfa724b0a90f6e238"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",

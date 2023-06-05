@@ -17,7 +17,6 @@ astroport = {path="../astroport/"}
 #Abstract dependencies 
 abstract-core = { version="0.15.1"}
 abstract-sdk = { version="0.15.1"}
-abstract-adapter-utils =  {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
 abstract-dex-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
 abstract-staking-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
 
