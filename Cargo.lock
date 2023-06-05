@@ -4,9 +4,9 @@ version = 3
 
 [[package]]
 name = "abstract-adapter"
-version = "0.15.0"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd1aaf3113878a665612d6395f3ffa3986f8013e3d690649f3c2365aea608aae"
+checksum = "188aea82de4419e188c9ebf44fe3456ff07f7aba5c04f4bfd147132204810a37"
 dependencies = [
  "abstract-core",
  "abstract-sdk",
@@ -22,8 +22,8 @@ dependencies = [
 
 [[package]]
 name = "abstract-adapter-utils"
-version = "0.14.2"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#9a9fc20745ce1c92b96233dd436b2553ef0e766c"
+version = "0.15.1"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#435cb1cfaaefa1540c4c9129a6f5f2f073e95b8a"
 dependencies = [
  "cosmwasm-std",
  "cw-asset",
@@ -31,25 +31,27 @@ dependencies = [
 ]
 
 [[package]]
-name = "abstract-astroport-dex-adapter"
+name = "abstract-astroport-adapter"
 version = "2.10.0"
 dependencies = [
  "abstract-adapter-utils",
  "abstract-core",
  "abstract-dex-adapter-traits",
  "abstract-sdk",
+ "abstract-staking-adapter-traits",
  "astroport",
  "cosmwasm-schema",
  "cosmwasm-std",
  "cw-asset",
+ "cw-utils 1.0.1",
  "cw20 0.15.1",
 ]
 
 [[package]]
 name = "abstract-core"
-version = "0.15.1"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3bc8791c215b091b2be056dab57d2f39af85f26fe97d1238c38f44eb487ce75f"
+checksum = "d95a9ee73c2664ad7807d0222f54411788f3860d0b6080399298058f71c82eea"
 dependencies = [
  "abstract-ica",
  "cosmwasm-schema",
@@ -72,8 +74,8 @@ dependencies = [
 
 [[package]]
 name = "abstract-dex-adapter-traits"
-version = "0.14.2"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#9a9fc20745ce1c92b96233dd436b2553ef0e766c"
+version = "0.15.1"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#435cb1cfaaefa1540c4c9129a6f5f2f073e95b8a"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -93,9 +95,9 @@ dependencies = [
 
 [[package]]
 name = "abstract-ica"
-version = "0.15.1"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e18b90bcf96edc53bea9303b438ccaec203ba532bd238034ffd9105df852c23"
+checksum = "b66cc47c8c97c6a29766bae976d031a686162a662a180241eae351c19742b782"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -106,9 +108,9 @@ dependencies = [
 
 [[package]]
 name = "abstract-macros"
-version = "0.15.1"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f917a8f255958af84d0d22893efb2a344a2fc106bd9132512b026aabd8bdeab"
+checksum = "55ddbcb226d02c9368e6742361c2356bb56f0977be76236450e34685374c65e2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -117,9 +119,9 @@ dependencies = [
 
 [[package]]
 name = "abstract-sdk"
-version = "0.15.1"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74ca67ceb925d10ae0dcbc1d904bf61fd0d7a77cc8dc110f6377acaf7d113dab"
+checksum = "f06467fc346e02b05c7f5d9f2d879a0bae8023288baf7ee8a83a74208a15f4d9"
 dependencies = [
  "abstract-core",
  "abstract-macros",
@@ -131,6 +133,28 @@ dependencies = [
  "cw20 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "schemars",
  "semver",
+ "serde 1.0.163",
+ "thiserror",
+]
+
+[[package]]
+name = "abstract-staking-adapter-traits"
+version = "0.15.1"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#435cb1cfaaefa1540c4c9129a6f5f2f073e95b8a"
+dependencies = [
+ "abstract-adapter",
+ "abstract-adapter-utils",
+ "abstract-core",
+ "abstract-sdk",
+ "anyhow",
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-asset",
+ "cw-storage-plus 1.0.1",
+ "cw-utils 1.0.1",
+ "cw20 1.0.1 (git+https://github.com/AbstractSDK/cw-plus.git)",
+ "cw20-base 1.0.1 (git+https://github.com/AbstractSDK/cw-plus.git)",
+ "schemars",
  "serde 1.0.163",
  "thiserror",
 ]
@@ -1821,9 +1845,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.144"
+version = "0.2.145"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b00cc1c228a6782d0f076e7b232802e0c5689d41bb5df366f2a6b6621cfdfe1"
+checksum = "fc86cde3ff845662b8f4ef6cb50ea0e20c524eb3d29ae048287e06a1b3fa6a81"
 
 [[package]]
 name = "libm"
@@ -2001,9 +2025,9 @@ checksum = "4eae0151b9dacf24fcc170d9995e511669a082856a91f958a2fe380bfab3fb22"
 
 [[package]]
 name = "once_cell"
-version = "1.17.2"
+version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9670a07f94779e00908f3e686eab508878ebb390ba6e604d3a284c00e8d0487b"
+checksum = "dd8b5dd2ae5ed71462c540258bedcb51965123ad7e7ccf4b9a8cafaa4a63576d"
 
 [[package]]
 name = "opaque-debug"

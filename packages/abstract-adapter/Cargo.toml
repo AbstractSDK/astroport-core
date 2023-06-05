@@ -1,5 +1,5 @@
 [package]
-name = "abstract-astroport-dex-adapter"
+name = "abstract-astroport-adapter"
 version = "2.10.0"
 authors = ["Abstract Money <contact@abstract.money>"]
 edition = "2021"
@@ -19,4 +19,7 @@ abstract-core = { version="0.15.1"}
 abstract-sdk = { version="0.15.1"}
 abstract-adapter-utils =  {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
 abstract-dex-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
+abstract-staking-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/impl-in-origin-repo"}
+
 cw-asset = "3.0.0"
+cw-utils = "1.0.1"
