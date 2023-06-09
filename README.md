@@ -75,3 +75,8 @@ Docs can be generated using `cargo doc --no-deps`
 ## Bug Bounty
 
 The contracts in this repo are included in a [bug bounty program](https://www.immunefi.com/bounty/astroport).
+
+
+## Dependencies (TODO)
+
+The dependencies need to be cleaned up because there are some patches in the main Cargo.toml

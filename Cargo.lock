@@ -23,7 +23,7 @@ dependencies = [
 [[package]]
 name = "abstract-adapter-utils"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#5e75e535c34d626e3753526e813c0a3c36a12dac"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#1f2641d7f7f429798cfe4942a2fb84ad17ade0a0"
 dependencies = [
  "cosmwasm-std",
  "cw-asset",
@@ -34,7 +34,6 @@ dependencies = [
 name = "abstract-astroport-adapter"
 version = "2.10.0"
 dependencies = [
- "abstract-core",
  "abstract-dex-adapter-traits",
  "abstract-sdk",
  "abstract-staking-adapter-traits",
@@ -49,8 +48,7 @@ dependencies = [
 [[package]]
 name = "abstract-core"
 version = "0.15.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d95a9ee73c2664ad7807d0222f54411788f3860d0b6080399298058f71c82eea"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
 dependencies = [
  "abstract-ica",
  "cosmwasm-schema",
@@ -74,7 +72,7 @@ dependencies = [
 [[package]]
 name = "abstract-dex-adapter-traits"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#5e75e535c34d626e3753526e813c0a3c36a12dac"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#1f2641d7f7f429798cfe4942a2fb84ad17ade0a0"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -94,8 +92,7 @@ dependencies = [
 [[package]]
 name = "abstract-ica"
 version = "0.15.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b66cc47c8c97c6a29766bae976d031a686162a662a180241eae351c19742b782"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -107,8 +104,7 @@ dependencies = [
 [[package]]
 name = "abstract-macros"
 version = "0.15.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "55ddbcb226d02c9368e6742361c2356bb56f0977be76236450e34685374c65e2"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -118,8 +114,7 @@ dependencies = [
 [[package]]
 name = "abstract-sdk"
 version = "0.15.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f06467fc346e02b05c7f5d9f2d879a0bae8023288baf7ee8a83a74208a15f4d9"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
 dependencies = [
  "abstract-core",
  "abstract-macros",
@@ -138,7 +133,7 @@ dependencies = [
 [[package]]
 name = "abstract-staking-adapter-traits"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#5e75e535c34d626e3753526e813c0a3c36a12dac"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#1f2641d7f7f429798cfe4942a2fb84ad17ade0a0"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -1677,9 +1672,9 @@ checksum = "bfa799dd5ed20a7e349f3b4639aa80d74549c81716d9ec4f994c9b5815598306"
 
 [[package]]
 name = "injective-cosmwasm"
-version = "0.1.104"
+version = "0.1.105"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3df1b875e3ac9b4eed880e5a60668814a62055fa9961f40a177ab3e0c47e768"
+checksum = "74b2d3b5cfe251bfe4d7f1aea33ad98886f2a01cefafaac4e14e86ad23822729"
 dependencies = [
  "cosmwasm-std",
  "cw-storage-plus 0.15.1",

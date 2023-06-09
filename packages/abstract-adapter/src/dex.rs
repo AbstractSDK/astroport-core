@@ -16,7 +16,7 @@ impl Identify for Astroport {
 
 #[cfg(feature="full_integration")]
 use ::{
-    abstract_core::objects::PoolAddress,
+    abstract_sdk::core::objects::PoolAddress,
     abstract_dex_adapter_traits::{DexCommand, DexError, Fee, FeeOnInput, Return, Spread, coins_in_assets, cw_approve_msgs},
     abstract_sdk::cw_helpers::wasm_smart_query,
     astroport::pair::{PoolResponse, SimulationResponse},
