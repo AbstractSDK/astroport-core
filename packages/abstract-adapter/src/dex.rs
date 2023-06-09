@@ -2,6 +2,7 @@ use crate::AVAILABLE_CHAINS;
 use crate::ASTROPORT;
 use abstract_dex_adapter_traits::Identify;
 // Source https://github.com/astroport-fi/astroport-core
+#[derive(Default)]
 pub struct Astroport {}
 
 impl Identify for Astroport {
