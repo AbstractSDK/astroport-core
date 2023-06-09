@@ -1,34 +1,18 @@
-use abstract_staking_adapter_traits::StakingError;
-use abstract_staking_adapter_traits::StakingCommand;
+use cosmwasm_std::Addr;
+use crate::ASTROPORT;
+use crate::AVAILABLE_CHAINS;
 use abstract_staking_adapter_traits::Identify;
+use abstract_sdk::core::objects::LpToken;
 
-use abstract_core::objects::AnsEntryConvertor;
-use abstract_sdk::{
-    core::objects::{AssetEntry, LpToken},
-    feature_objects::AnsHost,
-    AbstractSdkResult, Resolve,
-};
-
-use astroport::generator::{
-	Config, Cw20HookMsg, ExecuteMsg as GeneratorExecuteMsg, QueryMsg as GeneratorQueryMsg,
-    RewardInfoResponse,
-};
-
-use abstract_staking_adapter_traits::msg::{RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse};
-use cosmwasm_std::{
-    to_binary, wasm_execute, Addr, CosmosMsg, Deps, Env, QuerierWrapper, StdError, Uint128,
-};
-use cw20::Cw20ExecuteMsg;
-use cw_asset::AssetInfo;
-use cw_utils::Duration;
-
-pub const ASTROPORT: &str = "astroport";
 
 // TODO: use optional values here?
 #[derive(Clone, Debug)]
 pub struct Astroport {
+    #[allow(unused)]
     lp_token: LpToken,
+    #[allow(unused)]
     lp_token_address: Addr,
+    #[allow(unused)]
     generator_contract_address: Addr,
 }
 
@@ -49,9 +33,34 @@ impl Identify for Astroport {
     fn name(&self) -> &'static str {
         ASTROPORT
     }
-	fn over_ibc(&self) -> bool { false }
+    fn is_available_on(&self, chain_name: &str) -> bool {
+        AVAILABLE_CHAINS.contains(&chain_name)
+    }
 }
 
+#[cfg(feature="full_integration")]
+use ::{
+    abstract_staking_adapter_traits::{StakingError,StakingCommand},
+    abstract_staking_adapter_traits::msg::{RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse},
+    abstract_core::objects::AnsEntryConvertor,
+    abstract_sdk::{
+        core::objects::{AssetEntry},
+        feature_objects::AnsHost,
+        AbstractSdkResult, Resolve,
+    },
+    astroport::generator::{
+        Config, Cw20HookMsg, ExecuteMsg as GeneratorExecuteMsg, QueryMsg as GeneratorQueryMsg,
+        RewardInfoResponse,
+    },
+    cosmwasm_std::{
+        to_binary, wasm_execute, CosmosMsg, Deps, Env, QuerierWrapper, StdError, Uint128,
+    },
+    cw20::Cw20ExecuteMsg,
+    cw_asset::AssetInfo,
+    cw_utils::Duration
+};
+
+#[cfg(feature="full_integration")]
 impl StakingCommand for Astroport {
     fn fetch_data(
         &mut self,

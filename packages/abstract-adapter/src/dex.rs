@@ -1,13 +1,6 @@
-
-use abstract_core::objects::PoolAddress;
-use abstract_dex_adapter_traits::{DexCommand, DexError, Fee, FeeOnInput, Return, Spread, coins_in_assets, cw_approve_msgs, Identify};
-use abstract_sdk::cw_helpers::wasm_smart_query;
-use astroport::pair::{PoolResponse, SimulationResponse};
-use cosmwasm_std::{to_binary, wasm_execute, CosmosMsg, Decimal, Deps, Uint128};
-use cw20::Cw20ExecuteMsg;
-use cw_asset::{Asset, AssetInfo, AssetInfoBase};
-pub const ASTROPORT: &str = "astroport";
-
+use crate::AVAILABLE_CHAINS;
+use crate::ASTROPORT;
+use abstract_dex_adapter_traits::Identify;
 // Source https://github.com/astroport-fi/astroport-core
 pub struct Astroport {}
 
@@ -15,11 +8,24 @@ impl Identify for Astroport {
     fn name(&self) -> &'static str {
         ASTROPORT
     }
-    fn over_ibc(&self) -> bool {
-        false
+    fn is_available_on(&self, chain_name: &str) -> bool {
+        AVAILABLE_CHAINS.contains(&chain_name)
     }
 }
 
+
+#[cfg(feature="full_integration")]
+use ::{
+    abstract_core::objects::PoolAddress,
+    abstract_dex_adapter_traits::{DexCommand, DexError, Fee, FeeOnInput, Return, Spread, coins_in_assets, cw_approve_msgs},
+    abstract_sdk::cw_helpers::wasm_smart_query,
+    astroport::pair::{PoolResponse, SimulationResponse},
+    cosmwasm_std::{to_binary, wasm_execute, CosmosMsg, Decimal, Deps, Uint128},
+    cw20::Cw20ExecuteMsg,
+    cw_asset::{Asset, AssetInfo, AssetInfoBase}
+};
+
+#[cfg(feature="full_integration")]
 /// This structure describes a CW20 hook message.
 #[cosmwasm_schema::cw_serde]
 pub enum StubCw20HookMsg {
@@ -27,6 +33,7 @@ pub enum StubCw20HookMsg {
     WithdrawLiquidity {},
 }
 
+#[cfg(feature="full_integration")]
 impl DexCommand for Astroport {
     fn swap(
         &self,
@@ -267,6 +274,7 @@ impl DexCommand for Astroport {
     }
 }
 
+#[cfg(feature="full_integration")]
 fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexError> {
     match &asset.info {
         AssetInfoBase::Native(denom) => Ok(astroport::asset::Asset {
