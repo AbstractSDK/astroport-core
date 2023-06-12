@@ -23,7 +23,7 @@ dependencies = [
 [[package]]
 name = "abstract-adapter-utils"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#1f2641d7f7f429798cfe4942a2fb84ad17ade0a0"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#90bc9f86d396ee8f66c98352e199bfb45b23acb1"
 dependencies = [
  "cosmwasm-std",
  "cw-asset",
@@ -48,7 +48,7 @@ dependencies = [
 [[package]]
 name = "abstract-core"
 version = "0.15.3"
-source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#4022ab00e25a59abd381750c1ecf39881dc531f1"
 dependencies = [
  "abstract-ica",
  "cosmwasm-schema",
@@ -72,7 +72,7 @@ dependencies = [
 [[package]]
 name = "abstract-dex-adapter-traits"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#1f2641d7f7f429798cfe4942a2fb84ad17ade0a0"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#90bc9f86d396ee8f66c98352e199bfb45b23acb1"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -92,7 +92,7 @@ dependencies = [
 [[package]]
 name = "abstract-ica"
 version = "0.15.3"
-source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#4022ab00e25a59abd381750c1ecf39881dc531f1"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -104,7 +104,7 @@ dependencies = [
 [[package]]
 name = "abstract-macros"
 version = "0.15.3"
-source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#4022ab00e25a59abd381750c1ecf39881dc531f1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -114,7 +114,7 @@ dependencies = [
 [[package]]
 name = "abstract-sdk"
 version = "0.15.3"
-source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#13c2580871e662518951a6e86e6f5f63861ccb42"
+source = "git+https://github.com/AbstractSDK/contracts?branch=add/network_names#4022ab00e25a59abd381750c1ecf39881dc531f1"
 dependencies = [
  "abstract-core",
  "abstract-macros",
@@ -133,7 +133,7 @@ dependencies = [
 [[package]]
 name = "abstract-staking-adapter-traits"
 version = "0.15.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#1f2641d7f7f429798cfe4942a2fb84ad17ade0a0"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/impl-in-origin-repo#90bc9f86d396ee8f66c98352e199bfb45b23acb1"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -2319,9 +2319,9 @@ checksum = "dcf128d1287d2ea9d80910b5f1120d0b8eede3fbf1abe91c40d39ea7d51e6fda"
 
 [[package]]
 name = "rustix"
-version = "0.37.19"
+version = "0.37.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "acf8729d8542766f1b2cf77eb034d52f40d375bb8b615d0b147089946e16613d"
+checksum = "b96e891d04aa506a6d1f318d2771bcb1c7dfda84e126660ace067c9b474bb2c0"
 dependencies = [
  "bitflags",
  "errno",

@@ -40,8 +40,8 @@ impl Identify for Astroport {
 
 #[cfg(feature="full_integration")]
 use ::{
-    abstract_staking_adapter_traits::{StakingError,StakingCommand},
-    abstract_staking_adapter_traits::msg::{RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse},
+    abstract_staking_adapter_traits::{CwStakingError,CwStakingCommand},
+    abstract_staking_adapter_traits::query_responses::{RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse},
     abstract_sdk::{
         core::objects::{AssetEntry, AnsEntryConvertor},
         feature_objects::AnsHost,
@@ -60,7 +60,7 @@ use ::{
 };
 
 #[cfg(feature="full_integration")]
-impl StakingCommand for Astroport {
+impl CwStakingCommand for Astroport {
     fn fetch_data(
         &mut self,
         deps: Deps,
@@ -84,7 +84,7 @@ impl StakingCommand for Astroport {
         _deps: Deps,
         amount: Uint128,
         _unbonding_period: Option<Duration>,
-    ) -> Result<Vec<CosmosMsg>, StakingError> {
+    ) -> Result<Vec<CosmosMsg>, CwStakingError> {
         let msg = to_binary(&Cw20HookMsg::Deposit {})?;
         Ok(vec![wasm_execute(
             self.lp_token_address.to_string(),
@@ -103,7 +103,7 @@ impl StakingCommand for Astroport {
         _deps: Deps,
         amount: Uint128,
         _unbonding_period: Option<Duration>,
-    ) -> Result<Vec<CosmosMsg>, StakingError> {
+    ) -> Result<Vec<CosmosMsg>, CwStakingError> {
         let msg = GeneratorExecuteMsg::Withdraw {
             lp_token: self.lp_token_address.to_string(),
             amount,
@@ -116,11 +116,11 @@ impl StakingCommand for Astroport {
         .into()])
     }
 
-    fn claim(&self, _deps: Deps) -> Result<Vec<CosmosMsg>, StakingError> {
+    fn claim(&self, _deps: Deps) -> Result<Vec<CosmosMsg>, CwStakingError> {
         Ok(vec![])
     }
 
-    fn claim_rewards(&self, _deps: Deps) -> Result<Vec<CosmosMsg>, StakingError> {
+    fn claim_rewards(&self, _deps: Deps) -> Result<Vec<CosmosMsg>, CwStakingError> {
         let msg = GeneratorExecuteMsg::ClaimRewards {
             lp_tokens: vec![self.lp_token_address.clone().into()],
         };
@@ -133,7 +133,7 @@ impl StakingCommand for Astroport {
         .into()])
     }
 
-    fn query_info(&self, querier: &QuerierWrapper) -> Result<StakingInfoResponse, StakingError> {
+    fn query_info(&self, querier: &QuerierWrapper) -> Result<StakingInfoResponse, CwStakingError> {
         let Config { astro_token, .. } = querier
             .query_wasm_smart::<Config>(
                 self.generator_contract_address.clone(),
@@ -166,7 +166,7 @@ impl StakingCommand for Astroport {
         querier: &QuerierWrapper,
         staker: Addr,
         _unbonding_period: Option<Duration>,
-    ) -> Result<StakeResponse, StakingError> {
+    ) -> Result<StakeResponse, CwStakingError> {
         let stake_balance: Uint128 = querier
             .query_wasm_smart(
                 self.generator_contract_address.clone(),
@@ -192,14 +192,14 @@ impl StakingCommand for Astroport {
         &self,
         _querier: &QuerierWrapper,
         _staker: Addr,
-    ) -> Result<UnbondingResponse, StakingError> {
+    ) -> Result<UnbondingResponse, CwStakingError> {
         Ok(UnbondingResponse { claims: vec![] })
     }
 
     fn query_rewards(
         &self,
         querier: &QuerierWrapper,
-    ) -> Result<abstract_staking_adapter_traits::msg::RewardTokensResponse, StakingError> {
+    ) -> Result<abstract_staking_adapter_traits::query_responses::RewardTokensResponse, CwStakingError> {
         let reward_info: RewardInfoResponse = querier
             .query_wasm_smart(
                 self.generator_contract_address.clone(),
