@@ -293,3 +293,63 @@ fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexEr
         _ => Err(DexError::UnsupportedAssetType(asset.info.to_string())),
     }
 }
+
+
+
+#[cfg(test)]
+mod tests{
+    use std::str::FromStr;
+use cosmwasm_std::Decimal;
+use cosmwasm_std::coins;
+use cosmwasm_std::{Addr, wasm_execute};
+    use abstract_sdk::core::objects::PoolAddress;
+    use cw_asset::{Asset, AssetInfo};
+    use cw_orch::daemon::networks::PHOENIX_1;
+    use abstract_dex_adapter_traits::tests::DexCommandTester;
+    use super::Astroport;
+
+    fn create_setup()-> DexCommandTester{
+        DexCommandTester::new(PHOENIX_1.into(), Astroport {})
+    }
+
+
+    const POOL_CONTRACT: &str = "terra1fd68ah02gr2y8ze7tm9te7m70zlmc7vjyyhs6xlhsdmqqcjud4dql4wpxr";
+    const USDC: &str = "ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4";
+    const LUNA: &str = "uluna";
+
+    fn max_spread() -> Decimal{
+        Decimal::from_str("0.1").unwrap()
+    }
+
+
+    #[test]
+    fn swap(){
+
+        let amount = 100_000u128;
+        create_setup().test_swap(
+            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+            Asset::new(AssetInfo::native(USDC), amount),
+            AssetInfo::native(LUNA),
+            Some(Decimal::from_str("0.2").unwrap()),
+            Some(max_spread()),
+            vec![
+                wasm_execute(
+                    POOL_CONTRACT, 
+                    &astroport::pair::ExecuteMsg::Swap {
+                        offer_asset: astroport::asset::Asset {
+                            amount: amount.into(),
+                            info: astroport::asset::AssetInfo::NativeToken {
+                                denom: USDC.to_string()
+                            },
+                        },
+                        ask_asset_info: None,
+                        belief_price: Some(Decimal::from_str("0.2").unwrap()),
+                        max_spread: Some(max_spread()),
+                        to: None,
+                    },
+                    coins(amount, USDC)
+                ).unwrap().into()
+            ]
+        ).unwrap();
+    }
+}
