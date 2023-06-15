@@ -34,8 +34,3 @@ strip = true
 
 [patch.'https://github.com/astroport-fi/astroport-core']
 astroport = { path = "packages/astroport" }
-
-
-[patch.crates-io]
-abstract-sdk = { git="https://github.com/AbstractSDK/contracts", branch="add/network_names" }
-abstract-core = { git="https://github.com/AbstractSDK/contracts", branch="add/network_names" }
