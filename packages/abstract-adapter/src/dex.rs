@@ -298,10 +298,13 @@ fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexEr
 
 #[cfg(test)]
 mod tests{
+    use abstract_dex_adapter_traits::tests::expect_eq;
+    use cosmwasm_std::coin;
+        
     use std::str::FromStr;
-use cosmwasm_std::Decimal;
-use cosmwasm_std::coins;
-use cosmwasm_std::{Addr, wasm_execute};
+    use cosmwasm_std::Decimal;
+    use cosmwasm_std::coins;
+    use cosmwasm_std::{Addr, wasm_execute};
     use abstract_sdk::core::objects::PoolAddress;
     use cw_asset::{Asset, AssetInfo};
     use cw_orch::daemon::networks::PHOENIX_1;
@@ -324,15 +327,16 @@ use cosmwasm_std::{Addr, wasm_execute};
 
     #[test]
     fn swap(){
-
         let amount = 100_000u128;
-        create_setup().test_swap(
+        let msgs = create_setup().test_swap(
             PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
             Asset::new(AssetInfo::native(USDC), amount),
             AssetInfo::native(LUNA),
             Some(Decimal::from_str("0.2").unwrap()),
             Some(max_spread()),
-            vec![
+        ).unwrap();
+
+        expect_eq(msgs, vec![
                 wasm_execute(
                     POOL_CONTRACT, 
                     &astroport::pair::ExecuteMsg::Swap {
@@ -349,7 +353,89 @@ use cosmwasm_std::{Addr, wasm_execute};
                     },
                     coins(amount, USDC)
                 ).unwrap().into()
-            ]
+            ]).unwrap();
+    }
+
+    #[test]
+    fn provide_liquidity(){
+
+        let amount_usdc = 100_000u128;
+        let amount_luna = 50_000u128;
+        let msgs = create_setup().test_provide_liquidity(
+            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+            vec![
+                Asset::new(AssetInfo::native(USDC), amount_usdc),
+                Asset::new(AssetInfo::native(LUNA), amount_luna)
+            ],
+            Some(max_spread()),
         ).unwrap();
+
+        expect_eq(msgs, 
+            vec![
+                wasm_execute(
+                    POOL_CONTRACT, 
+                    &astroport::pair::ExecuteMsg::ProvideLiquidity {
+                        assets: vec![
+                            astroport::asset::Asset {
+                                amount: amount_usdc.into(),
+                                info: astroport::asset::AssetInfo::NativeToken {
+                                    denom: USDC.to_string()
+                                },
+                            },
+                            astroport::asset::Asset {
+                                amount: amount_luna.into(),
+                                info: astroport::asset::AssetInfo::NativeToken {
+                                    denom: LUNA.to_string()
+                                },
+                            },
+                        ],
+                        slippage_tolerance: Some(max_spread()),
+                        auto_stake: Some(false),
+                        receiver: None,
+                    },
+                    vec![
+                        coin(amount_usdc, USDC),
+                        coin(amount_luna, LUNA)
+
+                    ]
+                ).unwrap().into()
+            ]).unwrap();
+    }
+
+
+    #[test]
+    fn provide_liquidity_one_side(){
+
+        let amount_usdc = 100_000u128;
+        let amount_luna = 0u128;
+        let msgs = create_setup().test_provide_liquidity(
+            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+            vec![
+                Asset::new(AssetInfo::native(USDC), amount_usdc),
+                Asset::new(AssetInfo::native(LUNA), amount_luna)
+            ],
+            Some(max_spread())
+        ).unwrap();
+
+
+
+        expect_eq(msgs[0].clone(),
+                wasm_execute(
+                    POOL_CONTRACT, 
+                    &astroport::pair::ExecuteMsg::Swap {
+                        offer_asset: astroport::asset::Asset {
+                            amount: (amount_usdc/2u128).into(),
+                            info: astroport::asset::AssetInfo::NativeToken {
+                                denom: USDC.to_string()
+                            },
+                        },
+                        ask_asset_info: None,
+                        belief_price: None,
+                        max_spread: Some(max_spread()),
+                        to: None,
+                    },
+                    coins(amount_usdc/2u128, USDC)
+                ).unwrap().into()
+            ).unwrap();
     }
 }

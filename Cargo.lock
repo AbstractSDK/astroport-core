@@ -23,7 +23,7 @@ dependencies = [
 [[package]]
 name = "abstract-adapter-utils"
 version = "0.16.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/adapter-tests#89fbe21d76756355ff92d8961970743eed809acc"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/adapter-tests#be668c20fc3246ecc14aa9194a1a769f5d85daf7"
 dependencies = [
  "cosmwasm-std",
  "cw-asset",
@@ -75,7 +75,7 @@ dependencies = [
 [[package]]
 name = "abstract-dex-adapter-traits"
 version = "0.16.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/adapter-tests#89fbe21d76756355ff92d8961970743eed809acc"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/adapter-tests#be668c20fc3246ecc14aa9194a1a769f5d85daf7"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -141,7 +141,7 @@ dependencies = [
 [[package]]
 name = "abstract-staking-adapter-traits"
 version = "0.16.1"
-source = "git+https://github.com/AbstractSDK/adapters?branch=feature/adapter-tests#89fbe21d76756355ff92d8961970743eed809acc"
+source = "git+https://github.com/AbstractSDK/adapters?branch=feature/adapter-tests#be668c20fc3246ecc14aa9194a1a769f5d85daf7"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
