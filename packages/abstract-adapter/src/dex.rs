@@ -1,5 +1,5 @@
-use crate::AVAILABLE_CHAINS;
 use crate::ASTROPORT;
+use crate::AVAILABLE_CHAINS;
 use abstract_dex_adapter_traits::Identify;
 // Source https://github.com/astroport-fi/astroport-core
 #[derive(Default)]
@@ -14,19 +14,20 @@ impl Identify for Astroport {
     }
 }
 
-
-#[cfg(feature="full_integration")]
+#[cfg(feature = "full_integration")]
 use ::{
+    abstract_dex_adapter_traits::{
+        coins_in_assets, cw_approve_msgs, DexCommand, DexError, Fee, FeeOnInput, Return, Spread,
+    },
     abstract_sdk::core::objects::PoolAddress,
-    abstract_dex_adapter_traits::{DexCommand, DexError, Fee, FeeOnInput, Return, Spread, coins_in_assets, cw_approve_msgs},
     abstract_sdk::cw_helpers::wasm_smart_query,
     astroport::pair::{PoolResponse, SimulationResponse},
     cosmwasm_std::{to_binary, wasm_execute, CosmosMsg, Decimal, Deps, Uint128},
     cw20::Cw20ExecuteMsg,
-    cw_asset::{Asset, AssetInfo, AssetInfoBase}
+    cw_asset::{Asset, AssetInfo, AssetInfoBase},
 };
 
-#[cfg(feature="full_integration")]
+#[cfg(feature = "full_integration")]
 /// This structure describes a CW20 hook message.
 #[cosmwasm_schema::cw_serde]
 pub enum StubCw20HookMsg {
@@ -34,7 +35,7 @@ pub enum StubCw20HookMsg {
     WithdrawLiquidity {},
 }
 
-#[cfg(feature="full_integration")]
+#[cfg(feature = "full_integration")]
 impl DexCommand for Astroport {
     fn swap(
         &self,
@@ -243,7 +244,7 @@ impl DexCommand for Astroport {
         lp_token: Asset,
     ) -> Result<Vec<CosmosMsg>, DexError> {
         let pair_address = pool_id.expect_contract()?;
-        
+
         let hook_msg = astroport::pair::Cw20HookMsg::WithdrawLiquidity { assets: vec![] };
 
         let withdraw_msg = lp_token.send_msg(pair_address, to_binary(&hook_msg)?)?;
@@ -267,7 +268,7 @@ impl DexCommand for Astroport {
             pair_address.to_string(),
             &astroport::pair::QueryMsg::Simulation {
                 offer_asset: cw_asset_to_astroport(&offer_asset)?,
-                ask_asset_info: None
+                ask_asset_info: None,
             },
         )?)?;
         // commission paid in result asset
@@ -275,7 +276,7 @@ impl DexCommand for Astroport {
     }
 }
 
-#[cfg(feature="full_integration")]
+#[cfg(feature = "full_integration")]
 fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexError> {
     match &asset.info {
         AssetInfoBase::Native(denom) => Ok(astroport::asset::Asset {
@@ -294,218 +295,222 @@ fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexEr
     }
 }
 
-
-
 #[cfg(test)]
-mod tests{
-    use cosmwasm_std::Coin;
-use abstract_dex_adapter_traits::tests::expect_eq;
+mod tests {
+    use abstract_dex_adapter_traits::tests::expect_eq;
     use cosmwasm_schema::serde::Deserialize;
-    
-    use cosmwasm_std::CosmosMsg;
-    use cosmwasm_std::WasmMsg;
+    use cosmwasm_std::Coin;
+
     use cosmwasm_std::coin;
     use cosmwasm_std::from_binary;
-        
-    use std::assert_eq;
-    use std::str::FromStr;
-    use cosmwasm_std::Decimal;
-    use cosmwasm_std::coins;
-    use cosmwasm_std::{Addr, wasm_execute};
+    use cosmwasm_std::CosmosMsg;
+    use cosmwasm_std::WasmMsg;
+
+    use super::Astroport;
+    use abstract_dex_adapter_traits::tests::DexCommandTester;
     use abstract_sdk::core::objects::PoolAddress;
+    use cosmwasm_std::coins;
+    use cosmwasm_std::Decimal;
+    use cosmwasm_std::{wasm_execute, Addr};
     use cw_asset::{Asset, AssetInfo};
     use cw_orch::daemon::networks::PHOENIX_1;
-    use abstract_dex_adapter_traits::tests::DexCommandTester;
-    use super::Astroport;
+    use std::assert_eq;
+    use std::str::FromStr;
 
-    fn create_setup()-> DexCommandTester{
+    fn create_setup() -> DexCommandTester {
         DexCommandTester::new(PHOENIX_1.into(), Astroport {})
     }
-
 
     const POOL_CONTRACT: &str = "terra1fd68ah02gr2y8ze7tm9te7m70zlmc7vjyyhs6xlhsdmqqcjud4dql4wpxr";
     const USDC: &str = "ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4";
     const LUNA: &str = "uluna";
 
-    fn max_spread() -> Decimal{
+    fn max_spread() -> Decimal {
         Decimal::from_str("0.1").unwrap()
     }
 
-    fn get_wasm_msg<T: for<'de> Deserialize<'de>>(msg: CosmosMsg) -> T{
-        match msg{
+    fn get_wasm_msg<T: for<'de> Deserialize<'de>>(msg: CosmosMsg) -> T {
+        match msg {
             CosmosMsg::Wasm(WasmMsg::Execute { msg, .. }) => from_binary(&msg).unwrap(),
-            _ => panic!("Expected execute wasm msg, got a different enum")
+            _ => panic!("Expected execute wasm msg, got a different enum"),
         }
     }
-    
-    fn get_wasm_addr(msg: CosmosMsg) -> String{
-        match msg{
+
+    fn get_wasm_addr(msg: CosmosMsg) -> String {
+        match msg {
             CosmosMsg::Wasm(WasmMsg::Execute { contract_addr, .. }) => contract_addr,
-            _ => panic!("Expected execute wasm msg, got a different enum")
+            _ => panic!("Expected execute wasm msg, got a different enum"),
         }
     }
-    
-    fn get_wasm_funds(msg: CosmosMsg) -> Vec<Coin>{
-        match msg{
+
+    fn get_wasm_funds(msg: CosmosMsg) -> Vec<Coin> {
+        match msg {
             CosmosMsg::Wasm(WasmMsg::Execute { funds, .. }) => funds,
-            _ => panic!("Expected execute wasm msg, got a different enum")
+            _ => panic!("Expected execute wasm msg, got a different enum"),
         }
     }
 
-
     #[test]
-    fn swap(){
+    fn swap() {
         let amount = 100_000u128;
-        let msgs = create_setup().test_swap(
-            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
-            Asset::new(AssetInfo::native(USDC), amount),
-            AssetInfo::native(LUNA),
-            Some(Decimal::from_str("0.2").unwrap()),
-            Some(max_spread()),
-        ).unwrap();
+        let msgs = create_setup()
+            .test_swap(
+                PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+                Asset::new(AssetInfo::native(USDC), amount),
+                AssetInfo::native(LUNA),
+                Some(Decimal::from_str("0.2").unwrap()),
+                Some(max_spread()),
+            )
+            .unwrap();
 
-        expect_eq(vec![
-                wasm_execute(
-                    POOL_CONTRACT, 
-                    &astroport::pair::ExecuteMsg::Swap {
-                        offer_asset: astroport::asset::Asset {
-                            amount: amount.into(),
-                            info: astroport::asset::AssetInfo::NativeToken {
-                                denom: USDC.to_string()
-                            },
+        expect_eq(
+            vec![wasm_execute(
+                POOL_CONTRACT,
+                &astroport::pair::ExecuteMsg::Swap {
+                    offer_asset: astroport::asset::Asset {
+                        amount: amount.into(),
+                        info: astroport::asset::AssetInfo::NativeToken {
+                            denom: USDC.to_string(),
                         },
-                        ask_asset_info: None,
-                        belief_price: Some(Decimal::from_str("0.2").unwrap()),
-                        max_spread: Some(max_spread()),
-                        to: None,
                     },
-                    coins(amount, USDC)
-                ).unwrap().into()
-            ],
-            msgs, ).unwrap();
+                    ask_asset_info: None,
+                    belief_price: Some(Decimal::from_str("0.2").unwrap()),
+                    max_spread: Some(max_spread()),
+                    to: None,
+                },
+                coins(amount, USDC),
+            )
+            .unwrap()
+            .into()],
+            msgs,
+        )
+        .unwrap();
     }
 
     #[test]
-    fn provide_liquidity(){
-
+    fn provide_liquidity() {
         let amount_usdc = 100_000u128;
         let amount_luna = 50_000u128;
-        let msgs = create_setup().test_provide_liquidity(
-            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
-            vec![
-                Asset::new(AssetInfo::native(USDC), amount_usdc),
-                Asset::new(AssetInfo::native(LUNA), amount_luna)
-            ],
-            Some(max_spread()),
-        ).unwrap();
+        let msgs = create_setup()
+            .test_provide_liquidity(
+                PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+                vec![
+                    Asset::new(AssetInfo::native(USDC), amount_usdc),
+                    Asset::new(AssetInfo::native(LUNA), amount_luna),
+                ],
+                Some(max_spread()),
+            )
+            .unwrap();
 
-        expect_eq( 
-            vec![
-                wasm_execute(
-                    POOL_CONTRACT, 
-                    &astroport::pair::ExecuteMsg::ProvideLiquidity {
-                        assets: vec![
-                            astroport::asset::Asset {
-                                amount: amount_usdc.into(),
-                                info: astroport::asset::AssetInfo::NativeToken {
-                                    denom: USDC.to_string()
-                                },
+        expect_eq(
+            vec![wasm_execute(
+                POOL_CONTRACT,
+                &astroport::pair::ExecuteMsg::ProvideLiquidity {
+                    assets: vec![
+                        astroport::asset::Asset {
+                            amount: amount_usdc.into(),
+                            info: astroport::asset::AssetInfo::NativeToken {
+                                denom: USDC.to_string(),
                             },
-                            astroport::asset::Asset {
-                                amount: amount_luna.into(),
-                                info: astroport::asset::AssetInfo::NativeToken {
-                                    denom: LUNA.to_string()
-                                },
+                        },
+                        astroport::asset::Asset {
+                            amount: amount_luna.into(),
+                            info: astroport::asset::AssetInfo::NativeToken {
+                                denom: LUNA.to_string(),
                             },
-                        ],
-                        slippage_tolerance: Some(max_spread()),
-                        auto_stake: Some(false),
-                        receiver: None,
-                    },
-                    vec![
-                        coin(amount_usdc, USDC),
-                        coin(amount_luna, LUNA)
-
-                    ]
-                ).unwrap().into()
-            ],
-            msgs,).unwrap();
+                        },
+                    ],
+                    slippage_tolerance: Some(max_spread()),
+                    auto_stake: Some(false),
+                    receiver: None,
+                },
+                vec![coin(amount_usdc, USDC), coin(amount_luna, LUNA)],
+            )
+            .unwrap()
+            .into()],
+            msgs,
+        )
+        .unwrap();
     }
 
-
     #[test]
-    fn provide_liquidity_one_side(){
-
+    fn provide_liquidity_one_side() {
         let amount_usdc = 100_000u128;
         let amount_luna = 0u128;
-        let msgs = create_setup().test_provide_liquidity(
-            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
-            vec![
-                Asset::new(AssetInfo::native(USDC), amount_usdc),
-                Asset::new(AssetInfo::native(LUNA), amount_luna)
-            ],
-            Some(max_spread())
-        ).unwrap();
+        let msgs = create_setup()
+            .test_provide_liquidity(
+                PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+                vec![
+                    Asset::new(AssetInfo::native(USDC), amount_usdc),
+                    Asset::new(AssetInfo::native(LUNA), amount_luna),
+                ],
+                Some(max_spread()),
+            )
+            .unwrap();
 
         // There should be a swap before providing liquidity
         // We can't really test much further, because this unit test is querying mainnet liquidity pools
         expect_eq(
-                wasm_execute(
-                    POOL_CONTRACT, 
-                    &astroport::pair::ExecuteMsg::Swap {
-                        offer_asset: astroport::asset::Asset {
-                            amount: (amount_usdc/2u128).into(),
-                            info: astroport::asset::AssetInfo::NativeToken {
-                                denom: USDC.to_string()
-                            },
+            wasm_execute(
+                POOL_CONTRACT,
+                &astroport::pair::ExecuteMsg::Swap {
+                    offer_asset: astroport::asset::Asset {
+                        amount: (amount_usdc / 2u128).into(),
+                        info: astroport::asset::AssetInfo::NativeToken {
+                            denom: USDC.to_string(),
                         },
-                        ask_asset_info: None,
-                        belief_price: None,
-                        max_spread: Some(max_spread()),
-                        to: None,
                     },
-                    coins(amount_usdc/2u128, USDC)
-                ).unwrap().into(),
-                msgs[0].clone(),
-            ).unwrap();
+                    ask_asset_info: None,
+                    belief_price: None,
+                    max_spread: Some(max_spread()),
+                    to: None,
+                },
+                coins(amount_usdc / 2u128, USDC),
+            )
+            .unwrap()
+            .into(),
+            msgs[0].clone(),
+        )
+        .unwrap();
     }
 
     #[test]
-    fn provide_liquidity_symmetric(){
-
+    fn provide_liquidity_symmetric() {
         let amount_usdc = 100_000u128;
-        let msgs = create_setup().test_provide_liquidity_symmetric(
-            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
-            Asset::new(AssetInfo::native(USDC), amount_usdc),
-            vec![
-                AssetInfo::native(LUNA)
-            ],
-        ).unwrap();
+        let msgs = create_setup()
+            .test_provide_liquidity_symmetric(
+                PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+                Asset::new(AssetInfo::native(USDC), amount_usdc),
+                vec![AssetInfo::native(LUNA)],
+            )
+            .unwrap();
 
         assert_eq!(msgs.len(), 1);
         assert_eq!(get_wasm_addr(msgs[0].clone()), POOL_CONTRACT);
 
         let unwrapped_msg: astroport::pair::ExecuteMsg = get_wasm_msg(msgs[0].clone());
-        match unwrapped_msg{
+        match unwrapped_msg {
             astroport::pair::ExecuteMsg::ProvideLiquidity {
-                        assets,
-                        slippage_tolerance,
-                        auto_stake,
-                        receiver,
-                    }=>{
-                        assert_eq!(assets.len(), 2);
-                        assert_eq!(assets[0], astroport::asset::Asset {
-                                amount: amount_usdc.into(),
-                                info: astroport::asset::AssetInfo::NativeToken {
-                                    denom: USDC.to_string()
-                                },
-                            });
-                        assert_eq!(slippage_tolerance, None);
-                        assert_eq!(auto_stake, None);
-                        assert_eq!(receiver, None)
-
-                    },
-            _ => panic!("Expected a provide liquidity variant")
+                assets,
+                slippage_tolerance,
+                auto_stake,
+                receiver,
+            } => {
+                assert_eq!(assets.len(), 2);
+                assert_eq!(
+                    assets[0],
+                    astroport::asset::Asset {
+                        amount: amount_usdc.into(),
+                        info: astroport::asset::AssetInfo::NativeToken {
+                            denom: USDC.to_string()
+                        },
+                    }
+                );
+                assert_eq!(slippage_tolerance, None);
+                assert_eq!(auto_stake, None);
+                assert_eq!(receiver, None)
+            }
+            _ => panic!("Expected a provide liquidity variant"),
         }
 
         let funds = get_wasm_funds(msgs[0].clone());

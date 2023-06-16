@@ -1,9 +1,8 @@
-use cosmwasm_std::Addr;
 use crate::ASTROPORT;
 use crate::AVAILABLE_CHAINS;
-use abstract_staking_adapter_traits::Identify;
 use abstract_sdk::core::objects::LpToken;
-
+use abstract_staking_adapter_traits::Identify;
+use cosmwasm_std::Addr;
 
 // TODO: use optional values here?
 #[derive(Clone, Debug)]
@@ -38,15 +37,17 @@ impl Identify for Astroport {
     }
 }
 
-#[cfg(feature="full_integration")]
+#[cfg(feature = "full_integration")]
 use ::{
-    abstract_staking_adapter_traits::{CwStakingError,CwStakingCommand},
-    abstract_staking_adapter_traits::query_responses::{RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse},
     abstract_sdk::{
-        core::objects::{AssetEntry, AnsEntryConvertor},
+        core::objects::{AnsEntryConvertor, AssetEntry},
         feature_objects::AnsHost,
         AbstractSdkResult, Resolve,
     },
+    abstract_staking_adapter_traits::query_responses::{
+        RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse,
+    },
+    abstract_staking_adapter_traits::{CwStakingCommand, CwStakingError},
     astroport::generator::{
         Config, Cw20HookMsg, ExecuteMsg as GeneratorExecuteMsg, QueryMsg as GeneratorQueryMsg,
         RewardInfoResponse,
@@ -56,10 +57,10 @@ use ::{
     },
     cw20::Cw20ExecuteMsg,
     cw_asset::AssetInfo,
-    cw_utils::Duration
+    cw_utils::Duration,
 };
 
-#[cfg(feature="full_integration")]
+#[cfg(feature = "full_integration")]
 impl CwStakingCommand for Astroport {
     fn fetch_data(
         &mut self,
@@ -148,9 +149,11 @@ impl CwStakingCommand for Astroport {
                 ))
             })?;
 
-        let astro_token = AssetInfo::cw20(match astro_token{
-        	astroport::asset::AssetInfo::Token { contract_addr } => Ok(contract_addr),
-        	astroport::asset::AssetInfo::NativeToken { denom: _ } => Err(StdError::generic_err("Astro Token seems to be a native token, case not handled"))
+        let astro_token = AssetInfo::cw20(match astro_token {
+            astroport::asset::AssetInfo::Token { contract_addr } => Ok(contract_addr),
+            astroport::asset::AssetInfo::NativeToken { denom: _ } => Err(StdError::generic_err(
+                "Astro Token seems to be a native token, case not handled",
+            )),
         }?);
 
         Ok(StakingInfoResponse {
@@ -199,7 +202,10 @@ impl CwStakingCommand for Astroport {
     fn query_rewards(
         &self,
         querier: &QuerierWrapper,
-    ) -> Result<abstract_staking_adapter_traits::query_responses::RewardTokensResponse, CwStakingError> {
+    ) -> Result<
+        abstract_staking_adapter_traits::query_responses::RewardTokensResponse,
+        CwStakingError,
+    > {
         let reward_info: RewardInfoResponse = querier
             .query_wasm_smart(
                 self.generator_contract_address.clone(),
@@ -216,12 +222,12 @@ impl CwStakingCommand for Astroport {
                 ))
             })?;
 
-
-        let token = AssetInfo::cw20(match reward_info.base_reward_token{
-        	astroport::asset::AssetInfo::Token { contract_addr } => Ok(contract_addr),
-        	astroport::asset::AssetInfo::NativeToken { denom: _ } => Err(StdError::generic_err("Reward Token seems to be a native token, case not handled"))
+        let token = AssetInfo::cw20(match reward_info.base_reward_token {
+            astroport::asset::AssetInfo::Token { contract_addr } => Ok(contract_addr),
+            astroport::asset::AssetInfo::NativeToken { denom: _ } => Err(StdError::generic_err(
+                "Reward Token seems to be a native token, case not handled",
+            )),
         }?);
-
 
         let mut tokens = { vec![token] };
 
