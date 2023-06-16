@@ -299,12 +299,14 @@ fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexEr
 mod tests {
     use abstract_dex_adapter_traits::tests::expect_eq;
     use cosmwasm_schema::serde::Deserialize;
+    use cosmwasm_std::to_binary;
     use cosmwasm_std::Coin;
 
     use cosmwasm_std::coin;
     use cosmwasm_std::from_binary;
     use cosmwasm_std::CosmosMsg;
     use cosmwasm_std::WasmMsg;
+    use cw20::Cw20ExecuteMsg;
 
     use super::Astroport;
     use abstract_dex_adapter_traits::tests::DexCommandTester;
@@ -322,6 +324,7 @@ mod tests {
     }
 
     const POOL_CONTRACT: &str = "terra1fd68ah02gr2y8ze7tm9te7m70zlmc7vjyyhs6xlhsdmqqcjud4dql4wpxr";
+    const LP_TOKEN: &str = "terra1ckmsqdhlky9jxcmtyj64crgzjxad9pvsd58k8zsxsnv4vzvwdt7qke04hl";
     const USDC: &str = "ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4";
     const LUNA: &str = "uluna";
 
@@ -516,5 +519,47 @@ mod tests {
         let funds = get_wasm_funds(msgs[0].clone());
         assert_eq!(funds.len(), 2);
         assert_eq!(funds[0], coin(amount_usdc, USDC),);
+    }
+
+    #[test]
+    fn withdraw_liquidity() {
+        let amount_lp = 100_000u128;
+        let msgs = create_setup()
+            .test_withdraw_liquidity(
+                PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+                Asset::new(AssetInfo::cw20(Addr::unchecked(LP_TOKEN)), amount_lp),
+            )
+            .unwrap();
+
+        assert_eq!(
+            msgs,
+            vec![wasm_execute(
+                LP_TOKEN,
+                &Cw20ExecuteMsg::Send {
+                    contract: POOL_CONTRACT.to_string(),
+                    amount: amount_lp.into(),
+                    msg: to_binary(&astroport::pair::Cw20HookMsg::WithdrawLiquidity {
+                        assets: vec![]
+                    })
+                    .unwrap()
+                },
+                vec![]
+            )
+            .unwrap()
+            .into()]
+        );
+    }
+
+    #[test]
+    fn simulate_swap() {
+        let amount = 100_000u128;
+        // We siply verify it's executed, no check on what is returned
+        create_setup()
+            .test_simulate_swap(
+                PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+                Asset::new(AssetInfo::native(USDC), amount),
+                AssetInfo::native(LUNA),
+            )
+            .unwrap();
     }
 }
