@@ -298,9 +298,16 @@ fn cw_asset_to_astroport(asset: &Asset) -> Result<astroport::asset::Asset, DexEr
 
 #[cfg(test)]
 mod tests{
-    use abstract_dex_adapter_traits::tests::expect_eq;
+    use cosmwasm_std::Coin;
+use abstract_dex_adapter_traits::tests::expect_eq;
+    use cosmwasm_schema::serde::Deserialize;
+    
+    use cosmwasm_std::CosmosMsg;
+    use cosmwasm_std::WasmMsg;
     use cosmwasm_std::coin;
+    use cosmwasm_std::from_binary;
         
+    use std::assert_eq;
     use std::str::FromStr;
     use cosmwasm_std::Decimal;
     use cosmwasm_std::coins;
@@ -324,6 +331,27 @@ mod tests{
         Decimal::from_str("0.1").unwrap()
     }
 
+    fn get_wasm_msg<T: for<'de> Deserialize<'de>>(msg: CosmosMsg) -> T{
+        match msg{
+            CosmosMsg::Wasm(WasmMsg::Execute { msg, .. }) => from_binary(&msg).unwrap(),
+            _ => panic!("Expected execute wasm msg, got a different enum")
+        }
+    }
+    
+    fn get_wasm_addr(msg: CosmosMsg) -> String{
+        match msg{
+            CosmosMsg::Wasm(WasmMsg::Execute { contract_addr, .. }) => contract_addr,
+            _ => panic!("Expected execute wasm msg, got a different enum")
+        }
+    }
+    
+    fn get_wasm_funds(msg: CosmosMsg) -> Vec<Coin>{
+        match msg{
+            CosmosMsg::Wasm(WasmMsg::Execute { funds, .. }) => funds,
+            _ => panic!("Expected execute wasm msg, got a different enum")
+        }
+    }
+
 
     #[test]
     fn swap(){
@@ -336,7 +364,7 @@ mod tests{
             Some(max_spread()),
         ).unwrap();
 
-        expect_eq(msgs, vec![
+        expect_eq(vec![
                 wasm_execute(
                     POOL_CONTRACT, 
                     &astroport::pair::ExecuteMsg::Swap {
@@ -353,7 +381,8 @@ mod tests{
                     },
                     coins(amount, USDC)
                 ).unwrap().into()
-            ]).unwrap();
+            ],
+            msgs, ).unwrap();
     }
 
     #[test]
@@ -370,7 +399,7 @@ mod tests{
             Some(max_spread()),
         ).unwrap();
 
-        expect_eq(msgs, 
+        expect_eq( 
             vec![
                 wasm_execute(
                     POOL_CONTRACT, 
@@ -399,7 +428,8 @@ mod tests{
 
                     ]
                 ).unwrap().into()
-            ]).unwrap();
+            ],
+            msgs,).unwrap();
     }
 
 
@@ -417,9 +447,9 @@ mod tests{
             Some(max_spread())
         ).unwrap();
 
-
-
-        expect_eq(msgs[0].clone(),
+        // There should be a swap before providing liquidity
+        // We can't really test much further, because this unit test is querying mainnet liquidity pools
+        expect_eq(
                 wasm_execute(
                     POOL_CONTRACT, 
                     &astroport::pair::ExecuteMsg::Swap {
@@ -435,7 +465,51 @@ mod tests{
                         to: None,
                     },
                     coins(amount_usdc/2u128, USDC)
-                ).unwrap().into()
+                ).unwrap().into(),
+                msgs[0].clone(),
             ).unwrap();
+    }
+
+    #[test]
+    fn provide_liquidity_symmetric(){
+
+        let amount_usdc = 100_000u128;
+        let msgs = create_setup().test_provide_liquidity_symmetric(
+            PoolAddress::contract(Addr::unchecked(POOL_CONTRACT)),
+            Asset::new(AssetInfo::native(USDC), amount_usdc),
+            vec![
+                AssetInfo::native(LUNA)
+            ],
+        ).unwrap();
+
+        assert_eq!(msgs.len(), 1);
+        assert_eq!(get_wasm_addr(msgs[0].clone()), POOL_CONTRACT);
+
+        let unwrapped_msg: astroport::pair::ExecuteMsg = get_wasm_msg(msgs[0].clone());
+        match unwrapped_msg{
+            astroport::pair::ExecuteMsg::ProvideLiquidity {
+                        assets,
+                        slippage_tolerance,
+                        auto_stake,
+                        receiver,
+                    }=>{
+                        assert_eq!(assets.len(), 2);
+                        assert_eq!(assets[0], astroport::asset::Asset {
+                                amount: amount_usdc.into(),
+                                info: astroport::asset::AssetInfo::NativeToken {
+                                    denom: USDC.to_string()
+                                },
+                            });
+                        assert_eq!(slippage_tolerance, None);
+                        assert_eq!(auto_stake, None);
+                        assert_eq!(receiver, None)
+
+                    },
+            _ => panic!("Expected a provide liquidity variant")
+        }
+
+        let funds = get_wasm_funds(msgs[0].clone());
+        assert_eq!(funds.len(), 2);
+        assert_eq!(funds[0], coin(amount_usdc, USDC),);
     }
 }
