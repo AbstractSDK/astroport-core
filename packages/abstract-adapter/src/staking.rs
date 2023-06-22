@@ -44,7 +44,7 @@ use ::{
         feature_objects::AnsHost,
         AbstractSdkResult, Resolve,
     },
-    abstract_staking_adapter_traits::query_responses::{
+    abstract_staking_adapter_traits::msg::{
         RewardTokensResponse, StakeResponse, StakingInfoResponse, UnbondingResponse,
     },
     abstract_staking_adapter_traits::{CwStakingCommand, CwStakingError},
