@@ -120,9 +120,9 @@ dependencies = [
 
 [[package]]
 name = "abstract-dex-adapter-traits"
-version = "0.16.1"
+version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97a62ca4c055aa8ddd9a5fe2f6d03547d6b3fc72a643f5aebcd13c5ce88e6eba"
+checksum = "d14dc57ac8c4d71a790ddb9d1f6a1875f6dce2b4e7358400f0c5af5c5fcfe940"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
@@ -187,9 +187,9 @@ dependencies = [
 
 [[package]]
 name = "abstract-staking-adapter-traits"
-version = "0.16.1"
+version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f489b585ab8bd5120b3b09a704fc2c34e95c6c714882bda6071cbd00231216b"
+checksum = "ec2eb5d7e49b99ec612f79842b14dd8c8ae4b70d0f372ba8abc64c943202cacf"
 dependencies = [
  "abstract-adapter",
  "abstract-adapter-utils",
