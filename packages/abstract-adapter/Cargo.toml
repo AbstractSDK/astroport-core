@@ -14,8 +14,8 @@ full_integration=["dep:cw20", "dep:cosmwasm-schema", "dep:cw-asset", "dep:cw-uti
 
 [dependencies]
 cosmwasm-std = { version = "1.1" }
-abstract-dex-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/adapter-tests"}
-abstract-staking-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/adapter-tests"}
+abstract-staking-adapter-traits = { version="0.16.1" }
+abstract-dex-adapter-traits = { version="0.16.1" }
 abstract-sdk = { version="0.16.1"}
 
 
@@ -27,6 +27,6 @@ cw-utils = {version="1.0.1", optional=true}
 astroport = {path="../astroport/", optional=true}
 
 [dev-dependencies]
-abstract-dex-adapter-traits = {git="https://github.com/AbstractSDK/adapters", branch="feature/adapter-tests", features=["testing"]}
-cw-orch = {version="0.13.0", features=["daemon"]}
+abstract-dex-adapter-traits = { version="0.16.1", features=["testing"]}
+cw-orch = {version="0.13.1", features=["daemon"]}
 ibc-chain-registry = "0.24.1"
